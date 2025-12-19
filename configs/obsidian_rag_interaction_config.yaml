@@ -1,0 +1,13 @@
+model_config:
+  name: Qwen/Qwen3-4B-Instruct-2507
+  max_length: 1024
+  temperature: 0
+embedding_model_name: sentence-transformers/all-MiniLM-L6-v2
+prompt_name: GithubContextPromptV1
+chunk_size: 500
+chunk_overlap: 50
+documents:
+  type: github
+  owner: TimBoleslawsky
+  repo: data-science-vault
+  path: Notes/
