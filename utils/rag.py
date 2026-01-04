@@ -29,11 +29,11 @@ class RAG:
 
         # Build RAG chain
         self.rag_chain = self.build_rag_chain(
-            model_config=config.model,
-            embedding_model_name=config.embedding.model_name,
-            prompt_name=config.prompt.name,
-            chunk_size=config.chunking.size,
-            chunk_overlap=config.chunking.overlap
+            model_config=config.model_config,
+            embedding_model_name=config.embedding_model_name,
+            prompt_name=config.prompt_name,
+            chunk_size=config.chunk_size,
+            chunk_overlap=config.chunk_overlap
         )
 
     def build_rag_chain(self, model_config, embedding_model_name, prompt_name, chunk_size,
@@ -51,7 +51,7 @@ class RAG:
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
 
         metadata = [{"id": idx} for idx in self.documents.index]
-        documents = text_splitter.create_documents(texts=self.documents.abstract.tolist(), metadatas=metadata)
+        documents = text_splitter.create_documents(texts=self.documents.content.tolist(), metadatas=metadata)
         split_documents = text_splitter.split_documents(documents)
 
         # Defining a vector store using Chroma
@@ -59,9 +59,9 @@ class RAG:
 
         # Create RAG chain
         if prompt_name == "MedicalContextPromptV1":
-            prompt = MedicalContextPromptV1
+            prompt = MedicalContextPromptV1().get_prompt()
         elif prompt_name == "GithubContextPromptV1":
-            prompt = GithubContextPromptV1
+            prompt = GithubContextPromptV1().get_prompt()
         else:
             raise ValueError(f"Unknown prompt name: {prompt_name}")
 
@@ -98,6 +98,7 @@ class RAG:
             max_length=model_config.max_length,
             return_full_text=False,
             batch_size=4,
+            do_sample=True,
             temperature=model_config.temperature
         )
         llm = HuggingFacePipeline(pipeline=hf_pipeline)

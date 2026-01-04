@@ -8,14 +8,9 @@ def interact_with_rag(config):
     print("=================Building RAG Pipeline=================")
     rag = RAG(config)
 
-    print("=================Interactive RAG Session:=================")
-    while True:
-        user_question = input("Enter your question (or type 'exit' to quit): ")
-        if user_question.lower() == 'exit':
-            print("Exiting the interactive session.")
-            break
-
-        result_rag = rag.rag_chain.invoke(user_question)
+    # Start an interaction session, if no question is given in the config.
+    if config.question:
+        result_rag = rag.rag_chain.invoke(config.question)
         answer_rag = result_rag["answer"].strip()
 
         print("\nRAG Answer:")
@@ -23,6 +18,22 @@ def interact_with_rag(config):
         print("\nRetrieved Document Content:")
         print(result_rag["retrieved_docs"][0].page_content)
         print("--------------------------------------------------")
+    else:
+        print("=================Interactive RAG Session:=================")
+        while True:
+            user_question = input("Enter your question (or type 'exit' to quit): ")
+            if user_question.lower() == 'exit':
+                print("Exiting the interactive session.")
+                break
+
+            result_rag = rag.rag_chain.invoke(user_question)
+            answer_rag = result_rag["answer"].strip()
+
+            print("\nRAG Answer:")
+            print(answer_rag)
+            print("\nRetrieved Document Content:")
+            print(result_rag["retrieved_docs"][0].page_content)
+            print("--------------------------------------------------")
 
 
 if __name__ == "__main__":

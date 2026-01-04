@@ -7,12 +7,12 @@ class MedicalDataProcessor:
     def load_data():
         """Load PubMedQA dataset and prepare documents and questions dataframes."""
 
-        tmp_data = pd.read_json("medical_data.json").T
+        tmp_data = pd.read_json("data/medical_data.json").T
 
         # some labels have been defined as "maybe", only keep the yes/no answers
         tmp_data = tmp_data[tmp_data.final_decision.isin(["yes", "no"])]
         documents = pd.DataFrame(
-            {"abstract": tmp_data.apply(lambda row: " ".join(row.CONTEXTS + [row.LONG_ANSWER]), axis=1),
+            {"content": tmp_data.apply(lambda row: " ".join(row.CONTEXTS + [row.LONG_ANSWER]), axis=1),
              "year": tmp_data.YEAR})
         questions = pd.DataFrame({"question": tmp_data.QUESTION,
                                   "year": tmp_data.YEAR,
