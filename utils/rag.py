@@ -6,7 +6,7 @@ from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
-from .process_data import MedicalDataProcessor, GithubDataProcessor
+from .process_data import PubMedQADataProcessor, BioASQDataProcessor, GithubDataProcessor
 from .prompts import MedicalContextPromptV1, GithubContextPromptV1
 
 
@@ -16,7 +16,9 @@ class RAG:
 
         # Load documents based on type
         if config.documents.type == "medical":
-            self.documents, self.questions = MedicalDataProcessor.load_data()
+            self.documents, self.questions = PubMedQADataProcessor.load_data()
+        elif config.documents.type == "bioasq":
+            self.documents, self.questions = BioASQDataProcessor.load_data()
         elif config.documents.type == "github":
             self.documents = GithubDataProcessor.load_data(
                 owner=config.documents.owner,

@@ -1,8 +1,10 @@
-import pandas as pd
-import requests
 import base64
 
-class MedicalDataProcessor:
+import pandas as pd
+import requests
+
+
+class PubMedQADataProcessor:
     @staticmethod
     def load_data():
         """Load PubMedQA dataset and prepare documents and questions dataframes."""
@@ -21,6 +23,73 @@ class MedicalDataProcessor:
                                   "gold_document_id": documents.index})
 
         return documents, questions
+
+
+class BioASQDataProcessor:
+    @staticmethod
+    def load_data():
+        """Load BioASQ 13B yes/no datasets and prepare documents and questions dataframes."""
+
+        files = [
+            "data/13B1_golden.json",
+            "data/13B2_golden.json",
+            "data/13B3_golden.json",
+            "data/13B4_golden.json",
+        ]
+
+        all_questions = []
+
+        for file_path in files:
+            raw = pd.read_json(file_path)
+            df = raw["questions"].explode().apply(pd.Series)
+            # Keep only yes/no
+            df = df[df.type == "yesno"]
+
+            all_questions.append(df)
+
+        tmp_data = pd.concat(all_questions, ignore_index=True)
+
+        # Normalize snippets
+        tmp_data["CONTEXTS"] = tmp_data.snippets.apply(
+            lambda snippets: [
+                s["text"].strip()
+                for s in snippets
+                if isinstance(s, dict) and s.get("text")
+            ]
+        )
+
+        # Normalize ideal_answer
+        tmp_data["LONG_ANSWER"] = tmp_data.ideal_answer.apply(
+            lambda x: " ".join(x) if isinstance(x, list) else (x or "")
+        )
+
+        # Drop the rows without usable context and assign a year
+        tmp_data = tmp_data[tmp_data.CONTEXTS.map(len) > 0]
+        tmp_data["YEAR"] = 2025
+
+        # Create DataFrames
+        documents = pd.DataFrame(
+            {
+                "content": tmp_data.apply(
+                    lambda row: " ".join(row.CONTEXTS + [row.LONG_ANSWER]),
+                    axis=1,
+                ),
+                "year": tmp_data.YEAR,
+            }
+        )
+
+        questions = pd.DataFrame(
+            {
+                "question": tmp_data.body,
+                "year": tmp_data.YEAR,
+                "gold_label": tmp_data.exact_answer,
+                "gold_context": tmp_data.LONG_ANSWER,
+                "gold_document_id": documents.index,
+            }
+        )
+
+        return documents, questions
+
 
 class GithubDataProcessor:
     @staticmethod
