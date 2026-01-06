@@ -1,10 +1,10 @@
 model_config:
-  name: Qwen/Qwen3-4B-Instruct-2507
+  name: Qwen/Qwen2.5-14B-Instruct
   max_length: 1024
-  temperature: 0
+  temperature: 0.1
 embedding_model_name: sentence-transformers/all-MiniLM-L6-v2
 prompt_name: GithubContextPromptV1
-chunk_size: 500
+chunk_size: 1200
 chunk_overlap: 50
 documents:
   type: medical

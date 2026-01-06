@@ -41,7 +41,6 @@ class RAG:
         """Build a RAG chain using HuggingFace model and Chroma vector store."""
 
         # Load HuggingFace model
-        print("=================Loading Model:=================")
         self.llm = self._load_model(model_config)
 
         # Load embedding model

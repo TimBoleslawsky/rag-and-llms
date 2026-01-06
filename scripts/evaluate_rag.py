@@ -8,7 +8,7 @@ from utils import ConfigHandler, RAG, GithubContextPromptV1, MedicalContextPromp
 
 def evaluate_rag(config):
     """Comprehensive evaluation of the RAG pipeline. """
-    print("=================Building RAG Pipeline=================")
+    print("=================Building RAG Pipeline:=================")
     rag = RAG(config)
 
     print("=================Evaluation:=================")
