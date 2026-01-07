@@ -13,6 +13,18 @@ class MedicalContextPromptV1:
         return prompt
 
 
+class CounterfactualPromptV1:
+    @staticmethod
+    def get_prompt() -> ChatPromptTemplate:
+        template = """Based on the following context, if available, please answer the question about a location by providing the location name.
+        Context: {context}
+        Question: {question}
+        Answer:""".strip()
+        prompt = ChatPromptTemplate.from_template(template)
+
+        return prompt
+
+
 class GithubContextPromptV1:
     @staticmethod
     def get_prompt() -> ChatPromptTemplate:

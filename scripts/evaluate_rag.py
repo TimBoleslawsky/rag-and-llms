@@ -3,7 +3,7 @@ import json
 import os
 from datetime import datetime
 
-from utils import ConfigHandler, RAG, GithubContextPromptV1, MedicalContextPromptV1
+from utils import ConfigHandler, RAG, GithubContextPromptV1, CounterfactualPromptV1, MedicalContextPromptV1
 
 
 def evaluate_rag(config):
@@ -24,6 +24,8 @@ def evaluate_rag(config):
 
     if config.prompt_name == "MedicalContextPromptV1":
         prompt = MedicalContextPromptV1().get_prompt()
+    elif config.prompt_name == "CounterfactualPromptV1":
+        prompt = CounterfactualPromptV1().get_prompt()
     elif config.prompt_name == "GithubContextPromptV1":
         prompt = GithubContextPromptV1().get_prompt()
     else:

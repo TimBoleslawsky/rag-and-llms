@@ -1,10 +1,10 @@
 model_config:
-  name: Qwen/Qwen2.5-14B-Instruct
-  max_length: 10
+  name: Qwen/Qwen2.5-0.5B-Instruct
+  max_length: 128
   temperature: 1.0
 embedding_model_name: sentence-transformers/all-MiniLM-L6-v2
-prompt_name: MedicalContextPromptV1
+prompt_name: CounterfactualPromptV1
 chunk_size: 2048
 chunk_overlap: 50
 documents:
-  type: pubmed
+  type: clash

@@ -4,10 +4,10 @@ from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_huggingface import HuggingFacePipeline
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, BitsAndBytesConfig
 
-from .process_data import PubMedQADataProcessor, BioASQDataProcessor, GithubDataProcessor
-from .prompts import MedicalContextPromptV1, GithubContextPromptV1
+from .process_data import PubMedQADataProcessor, BioASQDataProcessor, ClashEvalDataProcessor, GithubDataProcessor
+from .prompts import MedicalContextPromptV1, CounterfactualPromptV1, GithubContextPromptV1
 
 
 class RAG:
@@ -15,10 +15,12 @@ class RAG:
         self.llm = None
 
         # Load documents based on type
-        if config.documents.type == "medical":
+        if config.documents.type == "pubmed":
             self.documents, self.questions = PubMedQADataProcessor.load_data()
         elif config.documents.type == "bioasq":
             self.documents, self.questions = BioASQDataProcessor.load_data()
+        elif config.documents.type == "clash":
+            self.documents, self.questions = ClashEvalDataProcessor.load_data()
         elif config.documents.type == "github":
             self.documents = GithubDataProcessor.load_data(
                 owner=config.documents.owner,
@@ -61,6 +63,8 @@ class RAG:
         # Create RAG chain
         if prompt_name == "MedicalContextPromptV1":
             prompt = MedicalContextPromptV1().get_prompt()
+        elif prompt_name == "CounterfactualPromptV1":
+            prompt = CounterfactualPromptV1().get_prompt()
         elif prompt_name == "GithubContextPromptV1":
             prompt = GithubContextPromptV1().get_prompt()
         else:
@@ -87,7 +91,16 @@ class RAG:
 
         # Load a model that is free to use
         tokenizer = AutoTokenizer.from_pretrained(model_config.name)
-        model = AutoModelForCausalLM.from_pretrained(model_config.name)
+        bnb_config = BitsAndBytesConfig( # This is for efficiency purposes
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype="float16",
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_quant_type="nf4",
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            model_config.name,
+            quantization_config=bnb_config,
+        )
 
         # Set pad token for batching
         tokenizer.pad_token = tokenizer.eos_token
@@ -96,7 +109,7 @@ class RAG:
             "text-generation",
             model=model,
             tokenizer=tokenizer,
-            max_length=model_config.max_length,
+            max_new_tokens=model_config.max_length,
             return_full_text=False,
             batch_size=4,
             do_sample=True,

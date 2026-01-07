@@ -2,6 +2,7 @@ import base64
 
 import pandas as pd
 import requests
+from datasets import load_dataset
 
 
 class PubMedQADataProcessor:
@@ -41,9 +42,9 @@ class BioASQDataProcessor:
 
         for file_path in files:
             raw = pd.read_json(file_path)
-            df = raw["questions"].explode().apply(pd.Series)
+            df = pd.json_normalize(raw["questions"])
             # Keep only yes/no
-            df = df[df.type == "yesno"]
+            df = df[df["type"] == "yesno"]
 
             all_questions.append(df)
 
@@ -87,6 +88,30 @@ class BioASQDataProcessor:
                 "gold_document_id": documents.index,
             }
         )
+
+        return documents, questions
+
+
+class ClashEvalDataProcessor:
+    @staticmethod
+    def load_data():
+        """Load ClashEval datasets and prepare documents and questions dataframes."""
+
+        dataset = load_dataset("parquet", data_files="data/clasheval.parquet")
+        filtered_data = dataset["train"].filter(lambda x: x["dataset"] == "locations") # We will only use the locations questions
+
+        documents = pd.DataFrame({
+            "content": filtered_data["context_mod"],
+            "year": 2026
+        })
+
+        questions = pd.DataFrame({
+            "question": filtered_data["question"],
+            "year": 2026,
+            "gold_label": filtered_data["answer_mod"],
+            "gold_context": filtered_data["context_mod"],
+            "gold_document_id": documents.index,
+        })
 
         return documents, questions
 
