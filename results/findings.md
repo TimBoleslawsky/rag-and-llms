@@ -1,46 +1,54 @@
 ## Results
 
-### BIOASQ – RAG PERFORMANCE
+### BIOASQ
 
-(50 questions per setting)
+(50 questions)
 
 Temperature = 0.1
 
 | Model | RAG Acc | No Context Acc | With Context Acc | Retrieval Acc |
 |-------|---------|----------------|------------------|---------------|
 | 0.5B  | 0.68    | 0.44           | 0.74             | 1.00          |
+| 3B    | 0.62    | 0.66           | 0.88             | 1.00          |
 | 7B    | 0.92    | 0.74           | 0.96             | 1.00          |
 | 14B   | 0.92    | 0.46           | 0.98             | 1.00          |
+| 32B   | 0.90    | 0.72           | 0.98             | 1.00          |
 
 Temperature = 1.0
 
 | Model | RAG Acc | No Context Acc | With Context Acc | Retrieval Acc |
 |-------|---------|----------------|------------------|---------------|
 | 0.5B  | 0.64    | 0.42           | 0.76             | 1.00          |
+| 3B    | 0.68    | 0.58           | 0.90             | 1.00          |
 | 7B    | 0.92    | 0.70           | 0.98             | 1.00          |
 | 14B   | 0.88    | 0.38           | 0.98             | 1.00          |
+| 32B   | 0.8     | 0.64           | 0.90             | 1.00          |
 
-### PUBMED – RAG PERFORMANCE
+### PUBMED 
 
-(50 questions per setting)
+(50 questions)
 
 Temperature = 0.1
 
 | Model | RAG Acc | No Context Acc | With Context Acc | Retrieval Acc |
 |-------|---------|----------------|------------------|---------------|
 | 0.5B  | 0.66    | 0.54           | 0.68             | 0.98          |
+| 3B    | 0.36    | 0.46           | 0.36             | 0.98          |
 | 7B    | 0.96    | 0.52           | 0.96             | 0.98          |
 | 14B   | 0.86    | 0.34           | 0.88             | 0.98          |
+| 32B   | 0.88    | 0.44           | 0.90             | 0.98          |
 
 Temperature = 1.0
 
 | Model | RAG Acc | No Context Acc | With Context Acc | Retrieval Acc |
 |-------|---------|----------------|------------------|---------------|
 | 0.5B  | 0.70    | 0.42           | 0.66             | 0.98          |
+| 3B    | 0.34    | 0.40           | 0.40             | 0.98          |
 | 7B    | 0.96    | 0.52           | 0.96             | 0.98          |
 | 14B   | 0.82    | 0.30           | 0.86             | 0.98          |
+| 32B   | 0.84    | 0.44           | 0.82             | 0.98          |
 
-### CLASHEVAL – CONTRADICTION SETTING
+### CLASHEVAL
 
 (50 questions)
 
@@ -49,16 +57,20 @@ Temperature = 0.1
 | Model | RAG Acc | No Context Acc | With Context Acc | Retrieval Acc |
 |-------|---------|----------------|------------------|---------------|
 | 0.5B  | 0.10    | 0.00           | 0.42             | 0.34          |
+| 3B    | 0.14    | 0.00           | 0.52             | 0.34          |
 | 7B    | 0.10    | 0.00           | 0.54             | 0.30          |
 | 14B   | 0.10    | 0.00           | 0.40             | 0.34          |
+| 32B   | 0.14    | 0.02           | 0.54             | 0.30          |
 
 Temperature = 1.0
 
 | Model | RAG Acc | No Context Acc | With Context Acc | Retrieval Acc |
 |-------|---------|----------------|------------------|---------------|
 | 0.5B  | 0.10    | 0.00           | 0.38             | 0.30          |
+| 3B    | 0.14    | 0.00           | 0.44             | 0.30          |
 | 7B    | 0.16    | 0.00           | 0.50             | 0.32          |
 | 14B   | 0.04    | 0.00           | 0.36             | 0.36          |
+| 32B   | 0.14    | 0.02           | 0.48             | 0.28          |
 
 ## Findings
 
