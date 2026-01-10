@@ -17,7 +17,8 @@ def evaluate_rag(config):
     num_model_with_context_is_correct = 0
     num_retrieval_is_correct = 0
 
-    example_questions = rag.questions.head(50)
+    #example_questions = rag.questions.head(50)
+    example_questions = rag.questions.iloc[50:100]
     iteration = 0
 
     detailed_results = []

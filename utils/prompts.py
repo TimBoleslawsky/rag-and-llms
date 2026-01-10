@@ -16,7 +16,7 @@ class MedicalContextPromptV1:
 class CounterfactualPromptV1:
     @staticmethod
     def get_prompt() -> ChatPromptTemplate:
-        template = """Based on the following context, if available, please answer the question about a location by providing the location name.
+        template = """Based on the following context, if available, please answer the question about a location by providing ONLY the location name.
         Context: {context}
         Question: {question}
         Answer:""".strip()

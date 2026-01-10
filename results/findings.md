@@ -33,7 +33,7 @@ Temperature = 0.1
 | Model | RAG Acc | No Context Acc | With Context Acc | Retrieval Acc |
 |-------|---------|----------------|------------------|---------------|
 | 0.5B  | 0.66    | 0.54           | 0.68             | 0.98          |
-| 3B    | 0.36    | 0.46           | 0.36             | 0.98          |
+| 3B    | 0.28    | 0.50           | 0.30             | 0.98          |
 | 7B    | 0.96    | 0.52           | 0.96             | 0.98          |
 | 14B   | 0.86    | 0.34           | 0.88             | 0.98          |
 | 32B   | 0.88    | 0.44           | 0.90             | 0.98          |
@@ -43,7 +43,7 @@ Temperature = 1.0
 | Model | RAG Acc | No Context Acc | With Context Acc | Retrieval Acc |
 |-------|---------|----------------|------------------|---------------|
 | 0.5B  | 0.70    | 0.42           | 0.66             | 0.98          |
-| 3B    | 0.34    | 0.40           | 0.40             | 0.98          |
+| 3B    | 0.30    | 0.48           | 0.36             | 0.98          |
 | 7B    | 0.96    | 0.52           | 0.96             | 0.98          |
 | 14B   | 0.82    | 0.30           | 0.86             | 0.98          |
 | 32B   | 0.84    | 0.44           | 0.82             | 0.98          |
@@ -56,45 +56,64 @@ Temperature = 0.1
 
 | Model | RAG Acc | No Context Acc | With Context Acc | Retrieval Acc |
 |-------|---------|----------------|------------------|---------------|
-| 0.5B  | 0.10    | 0.00           | 0.42             | 0.34          |
-| 3B    | 0.14    | 0.00           | 0.52             | 0.34          |
-| 7B    | 0.10    | 0.00           | 0.54             | 0.30          |
-| 14B   | 0.10    | 0.00           | 0.40             | 0.34          |
-| 32B   | 0.14    | 0.02           | 0.54             | 0.30          |
+| 0.5B  | 0.12    | 0.00           | 0.40             | 0.34          |
+| 3B    | 0.18    | 0.02           | 0.56             | 0.34          |
+| 7B    | 0.14    | 0.02           | 0.64             | 0.32          |
+| 14B   | 0.14    | 0.02           | 0.64             | 0.32          |
+| 32B   | 0.12    | 0.02           | 0.54             | 0.32          |
 
 Temperature = 1.0
 
 | Model | RAG Acc | No Context Acc | With Context Acc | Retrieval Acc |
 |-------|---------|----------------|------------------|---------------|
-| 0.5B  | 0.10    | 0.00           | 0.38             | 0.30          |
-| 3B    | 0.14    | 0.00           | 0.44             | 0.30          |
-| 7B    | 0.16    | 0.00           | 0.50             | 0.32          |
-| 14B   | 0.04    | 0.00           | 0.36             | 0.36          |
-| 32B   | 0.14    | 0.02           | 0.48             | 0.28          |
+| 0.5B  | 0.10    | 0.00           | 0.38             | 0.32          |
+| 3B    | 0.12    | 0.02           | 0.54             | 0.32          |
+| 7B    | 0.14    | 0.02           | 0.62             | 0.30          |
+| 14B   | 0.18    | 0.02           | 0.64             | 0.30          |
+| 32B   | 0.18    | 0.02           | 0.56             | 0.32          |
 
 ## Findings
 
-### With Context Accuracy Analysis
+### Language Model Efficacy 
 
-- 0.5B Model constantly performs worse than larger models when provided with context.
-- 7BM Model performs more stably than 14B Model across datasets and temperatures.
+- Model efficacy with and without context consistently increases with size until about 7B parameters (3B model with pubmed dataset seems to be an outlier). 
+- Model efficacy seems to fall off a bit when increasing the model size past 7B parameters. Especially without context. Interesting here is, that the 14B model is significantly worse than the 7B and the 32B model. 
+- Increasing the temperature seems to decrease the efficacy a bit, with the 7B model being the most stable.
 
-### Without Context Accuracy Analysis
-
-- 14B Model shows a significant drop in accuracy without context, indicating dependence on retrieved information.
-- 7B Model and 0.5B Model show more consistent performance without context.
-
-### Temperature Analysis
-
-- Higher temperature generally decreases accuracy.
-- The 7B Model is less affected by temperature changes compared to 0.5B and 14B Models.
-
-### Counterfactual Analysis
+### Counterfactual Performance
 
 - Retrieval accuracy is low ⇒ model is under epistemic stress, meaning the model’s usual mechanisms for producing
   correct answers are put under strain (available information sources conflict).
 - RAG accuracy is not really helpful here.
-- Model with no context is consistently bad (0%). This tells us that 1.) the questions cannot be solved with internal
+- Model with no context is consistently bad (0.00 - 0.02%). This tells us that 1.) the questions cannot be solved with internal
   knowledge, it is actually misleading, and 2.) larger models are not better at this than smaller models.
 - Overall accuracy with context is low, indicating that models struggle with the contradictions.
-- There is a U shape in performance as the model size increases (7B is better than both 0.5B and 14B).
+- 7B and 14B models perform the best. Still a monotonous increase in efficacy from 0.5-7B, slight decline with 32B model. 
+
+## Explanations
+
+TBD
+
+## Limitations
+
+### Single consistent configuration
+
+All experiments work with one fixed configuration, for example for the retrieval pipeline (all-MiniLM-L6-v2 embeddings, fixed chunk size and overlap). 
+This ensures controlled comparisons across model sizes, but the observed effects may be different under different configurations or retrievers.
+The configuration is also not tuned to the specific model size but is constant. 
+
+### Accuracy-focused evaluation without explicit faithfulness metrics
+
+The study evaluates answer correctness but does not explicitly measure whether generated answers are grounded in the
+retrieved context. As a result, correct answers may occasionally be produced based on parametric knowledge rather than
+retrieved evidence, particularly for larger models.
+
+### Single prompt per task setting
+
+Each dataset is evaluated using a fixed prompt template. This isolates model size effects, but alternative
+prompting strategies, especially those fine-tuned to specific models, might change the behavior of the models significantly. 
+
+### Domain specificity
+
+The experiments focus on biomedical QA and counterfactual factual tasks. The extent to which the observed scaling and
+contradiction-handling behaviors generalize to other domains remains unanswered.
