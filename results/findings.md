@@ -76,6 +76,7 @@ Temperature = 1.0
 
 ### Language Model Efficacy 
 
+- Context consistently improves performance. 
 - Model efficacy with and without context consistently increases with size until about 7B parameters (3B model with pubmed dataset seems to be an outlier). 
 - Model efficacy seems to fall off a bit when increasing the model size past 7B parameters. Especially without context. Interesting here is, that the 14B model is significantly worse than the 7B and the 32B model. 
 - Increasing the temperature seems to decrease the efficacy a bit, with the 7B model being the most stable.
